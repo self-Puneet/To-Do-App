@@ -4,7 +4,7 @@ import 'package:todo_app/core/errors/failure.dart';
 import 'package:todo_app/core/platform/network_info.dart';
 import 'package:todo_app/features/display_tasks/data/datasource/display_task_local_data_source.dart';
 import 'package:todo_app/features/display_tasks/data/datasource/display_task_remote_data_source.dart';
-import 'package:todo_app/features/display_tasks/data/model/subtask_model.dart';
+import 'package:todo_app/features/display_tasks/domain/entities/subtask_entity.dart';
 import 'package:todo_app/features/display_tasks/domain/entities/task_entity.dart';
 import 'package:todo_app/features/display_tasks/domain/repositories/display_tasks_repository.dart';
 
@@ -25,14 +25,16 @@ class DisplayTasksRepositoryImpl implements DisplayTasksRepository {
       try {
         final tasks = await remoteDataSource.getAllPinnedTasks();
         await localDataSource.cacheTasks(tasks);
-        return Right(tasks);
+        final taskEntities = tasks.map((model) => model.toEntity()).toList();
+        return Right(taskEntities);
       } catch (e) {
         return Left(ServerFailure());
       }
     } else {
       try {
         final tasks = await localDataSource.getCachedTasks();
-        return Right(tasks);
+        final taskEntities = tasks.map((model) => model.toEntity()).toList();
+        return Right(taskEntities);
       } catch (e) {
         return Left(CacheFailure());
       }
@@ -40,21 +42,25 @@ class DisplayTasksRepositoryImpl implements DisplayTasksRepository {
   }
 
   @override
-  Future<Either<Failure, List<SubtaskModel>>> getAllSubtasksByTaskId(
+  Future<Either<Failure, List<SubtaskEntity>>> getAllSubtasksByTaskId(
     String taskId,
   ) async {
     if (await networkInfo.isConnected()) {
       try {
         final subtasks = await remoteDataSource.getAllSubtasksByTaskId(taskId);
         localDataSource.cacheSubtasks(subtasks, taskId);
-        return Right(subtasks);
+        final subtaskEntities = subtasks
+            .map((model) => model.toEntity())
+            .toList();
+        return Right(subtaskEntities);
       } catch (e) {
         return Left(ServerFailure());
       }
     } else {
       try {
         final tasks = await localDataSource.getCachedSubtasks(taskId);
-        return Right(tasks);
+        final subtaskEntities = tasks.map((model) => model.toEntity()).toList();
+        return Right(subtaskEntities);
       } catch (e) {
         return Left(CacheFailure());
       }
@@ -67,14 +73,16 @@ class DisplayTasksRepositoryImpl implements DisplayTasksRepository {
       try {
         final tasks = await remoteDataSource.getAllTasks();
         localDataSource.cacheTasks(tasks);
-        return Right(tasks);
+        final finalTasks = tasks.map((model) => model.toEntity()).toList();
+        return Right(finalTasks);
       } catch (e) {
         return Left(ServerFailure());
       }
     } else {
       try {
         final tasks = await localDataSource.getCachedTasks();
-        return Right(tasks);
+        final finalTasks = tasks.map((model) => model.toEntity()).toList();
+        return Right(finalTasks);
       } catch (e) {
         return Left(CacheFailure());
       }
@@ -89,14 +97,16 @@ class DisplayTasksRepositoryImpl implements DisplayTasksRepository {
       try {
         final tasks = await remoteDataSource.getAllTasksByStatus(status);
         localDataSource.cacheTasks(tasks);
-        return Right(tasks);
+        final finalTasks = tasks.map((model) => model.toEntity()).toList();
+        return Right(finalTasks);
       } catch (e) {
         return Left(ServerFailure());
       }
     } else {
       try {
         final tasks = await localDataSource.getCachedTasks();
-        return Right(tasks);
+        final finalTasks = tasks.map((model) => model.toEntity()).toList();
+        return Right(finalTasks);
       } catch (e) {
         return Left(CacheFailure());
       }

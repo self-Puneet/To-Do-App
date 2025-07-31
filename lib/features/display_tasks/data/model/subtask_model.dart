@@ -1,47 +1,84 @@
+import 'package:hive/hive.dart';
 import 'package:todo_app/core/enums/task_status.dart';
 import 'package:todo_app/features/display_tasks/domain/entities/subtask_entity.dart';
 
-class SubtaskModel extends SubtaskEntity {
-  const SubtaskModel({
-    required String id,
-    required DateTime creationDate,
-    DateTime? deadline,
-    required String taskTitle,
-    String? taskDescription,
-    required TaskStatus taskStatus,
-  }) : super(
-          id: id,
-          creationDate: creationDate,
-          deadline: deadline,
-          taskTitle: taskTitle,
-          taskDescription: taskDescription,
-          taskStatus: taskStatus,
-        );
+part 'subtask_model.g.dart';
 
-  /// ✅ Deserialize from JSON
+@HiveType(typeId: 1)
+class SubtaskModel {
+  @HiveField(0)
+  final String subtaskId;
+
+  @HiveField(1)
+  final DateTime subtaskCreationDate;
+
+  @HiveField(2)
+  final DateTime? subtaskDeadline;
+
+  @HiveField(3)
+  final String subtaskTitle;
+
+  @HiveField(4)
+  final String? subtaskDescription;
+
+  @HiveField(5)
+  final TaskStatus subtaskStatus;
+
+  const SubtaskModel({
+    required this.subtaskId,
+    required this.subtaskCreationDate,
+    this.subtaskDeadline,
+    required this.subtaskTitle,
+    this.subtaskDescription,
+    required this.subtaskStatus,
+  });
+
   factory SubtaskModel.fromJson(Map<String, dynamic> json) {
     return SubtaskModel(
-      id: json['id'] as String,
-      creationDate: DateTime.parse(json['creationDate']),
-      deadline: json['deadline'] != null ? DateTime.parse(json['deadline']) : null,
-      taskTitle: json['taskTitle'] as String,
-      taskDescription: json['taskDescription'],
-      taskStatus: TaskStatus.values.firstWhere(
+      subtaskId: json['id'],
+      subtaskCreationDate: DateTime.parse(json['creationDate']),
+      subtaskDeadline: json['deadline'] != null
+          ? DateTime.parse(json['deadline'])
+          : null,
+      subtaskTitle: json['taskTitle'],
+      subtaskDescription: json['taskDescription'],
+      subtaskStatus: TaskStatus.values.firstWhere(
         (e) => e.name == json['taskStatus'],
         orElse: () => TaskStatus.pending,
       ),
     );
   }
 
-  /// ✅ Serialize to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'creationDate': creationDate.toIso8601String(),
-      'deadline': deadline?.toIso8601String(),
-      'taskTitle': taskTitle,
-      'taskDescription': taskDescription,
-      'taskStatus': taskStatus.name,
-    };
+  Map<String, dynamic> toJson() => {
+    'id': subtaskId,
+    'creationDate': subtaskCreationDate.toIso8601String(),
+    'deadline': subtaskDeadline?.toIso8601String(),
+    'taskTitle': subtaskTitle,
+    'taskDescription': subtaskDescription,
+    'taskStatus': subtaskStatus.name,
+  };
+
+  // toEntity conversion
+  SubtaskEntity toEntity() {
+    return SubtaskEntity(
+      id: subtaskId,
+      creationDate: subtaskCreationDate,
+      deadline: subtaskDeadline,
+      taskTitle: subtaskTitle,
+      taskDescription: subtaskDescription,
+      taskStatus: subtaskStatus,
+    );
+  }
+
+  // fromEntity conversion
+  factory SubtaskModel.fromEntity(SubtaskEntity entity) {
+    return SubtaskModel(
+      subtaskId: entity.id,
+      subtaskCreationDate: entity.creationDate,
+      subtaskDeadline: entity.deadline,
+      subtaskTitle: entity.taskTitle,
+      subtaskDescription: entity.taskDescription,
+      subtaskStatus: entity.taskStatus,
+    );
   }
 }

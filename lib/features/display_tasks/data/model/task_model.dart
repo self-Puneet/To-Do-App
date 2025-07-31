@@ -1,33 +1,47 @@
 import 'package:todo_app/core/enums/task_status.dart';
 import 'package:todo_app/features/display_tasks/data/model/subtask_model.dart';
 import 'package:todo_app/features/display_tasks/domain/entities/task_entity.dart';
+import 'package:hive/hive.dart';
 
-class TaskModel extends TaskEntity {
+part 'task_model.g.dart';
+
+@HiveType(typeId: 2)
+class TaskModel {
+  @HiveField(0)
+  final String id;
+  @HiveField(1)
+  final DateTime creationDate;
+  @HiveField(2)
+  final DateTime? deadline;
+  @HiveField(3)
+  final String taskTitle;
+  @HiveField(4)
+  final String? taskDescription;
+  @HiveField(5)
+  final TaskStatus? taskStatus;
+  @HiveField(6)
+  final bool pinned;
+  @HiveField(7)
+  final List<SubtaskModel> subtasks;
+
   TaskModel({
-    required String id,
-    required DateTime creationDate,
-    DateTime? deadline,
-    required String taskTitle,
-    String? taskDescription,
-    TaskStatus? taskStatus = TaskStatus.pending,
-    bool? pinned = false,
-    List<SubtaskModel> subtasks = const [],
-  }) : super(
-          id: id,
-          creationDate: creationDate,
-          deadline: deadline,
-          taskTitle: taskTitle,
-          taskDescription: taskDescription,
-          taskStatus: taskStatus,
-          pinned: pinned,
-          subtasks: subtasks,
-        );
+    required this.id,
+    required this.creationDate,
+    this.deadline,
+    required this.taskTitle,
+    this.taskDescription,
+    this.taskStatus = TaskStatus.pending,
+    this.pinned = false,
+    this.subtasks = const [],
+  });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
       id: json['id'] as String,
       creationDate: DateTime.parse(json['creationDate']),
-      deadline: json['deadline'] != null ? DateTime.parse(json['deadline']) : null,
+      deadline: json['deadline'] != null
+          ? DateTime.parse(json['deadline'])
+          : null,
       taskTitle: json['taskTitle'] ?? '',
       taskDescription: json['taskDescription'],
       taskStatus: json['taskStatus'] != null
@@ -52,7 +66,35 @@ class TaskModel extends TaskEntity {
       'taskDescription': taskDescription,
       'taskStatus': taskStatus?.name,
       'pinned': pinned,
-      'subtasks': subtasks.map((e) => (e as SubtaskModel).toJson()).toList(),
+      'subtasks': subtasks.map((e) => e.toJson()).toList(),
     };
+  }
+
+  // toEntity conversion
+  TaskEntity toEntity() {
+    return TaskEntity(
+      id: id,
+      creationDate: creationDate,
+      deadline: deadline,
+      taskTitle: taskTitle,
+      taskDescription: taskDescription,
+      taskStatus: taskStatus,
+      pinned: pinned,
+      subtasks: subtasks.map((e) => e.toEntity()).toList(),
+    );
+  }
+
+  // from entity conversion
+  factory TaskModel.fromEntity(TaskEntity entity) {
+    return TaskModel(
+      id: entity.id,
+      creationDate: entity.creationDate,
+      deadline: entity.deadline,
+      taskTitle: entity.taskTitle,
+      taskDescription: entity.taskDescription,
+      taskStatus: entity.taskStatus,
+      pinned: entity.pinned ?? false,
+      subtasks: entity.subtasks.map((e) => SubtaskModel.fromEntity(e)).toList(),
+    );
   }
 }

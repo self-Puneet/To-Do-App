@@ -1,4 +1,5 @@
 // create a abstract class which should contain 2 functions - getcached tasks and cache the fetched taks. nomenclature should be appropriate
+import 'package:hive/hive.dart';
 import 'package:todo_app/features/display_tasks/data/model/subtask_model.dart';
 import 'package:todo_app/features/display_tasks/data/model/task_model.dart';
 
