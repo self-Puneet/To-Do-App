@@ -7,11 +7,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:todo_app/core/enums/task_status.dart';
 import 'package:todo_app/core/errors/failure.dart';
+import 'package:todo_app/features/display_tasks/domain/entities/subtask_entity.dart';
 import 'package:todo_app/features/display_tasks/domain/entities/task_entity.dart';
 
 abstract class DisplayTasksRepository {
   Future<Either<Failure, List<TaskEntity>>> getAllTasks();
   Future<Either<Failure, List<TaskEntity>>> getAllPinnedTasks();
   Future<Either<Failure, List<TaskEntity>>> getAllTasksByStatus(TaskStatus status);
-  Future<Either<Failure, List<TaskEntity>>> getAllSubtasksByTaskId(String taskId);
+  Future<Either<Failure, List<SubtaskEntity>>> getAllSubtasksByTaskId(String taskId);
 }
