@@ -1,6 +1,6 @@
 import 'package:todo_app/core/enums/task_status.dart';
-import 'package:todo_app/features/display_tasks/data/model/subtask_model.dart';
-import 'package:todo_app/features/display_tasks/domain/entities/task_entity.dart';
+import 'package:todo_app/features/fetch_tasks/data/model/subtask_model.dart';
+import 'package:todo_app/features/fetch_tasks/domain/entities/task_entity.dart';
 import 'package:hive/hive.dart';
 
 part 'task_model.g.dart';

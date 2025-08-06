@@ -2,24 +2,30 @@
 
 import 'package:todo_app/core/enums/task_status.dart';
 import 'package:todo_app/core/errors/exceptions.dart';
-import 'package:todo_app/features/display_tasks/data/model/subtask_model.dart';
-import 'package:todo_app/features/display_tasks/data/model/task_model.dart';
+import 'package:todo_app/features/fetch_tasks/data/model/subtask_model.dart';
+import 'package:todo_app/features/fetch_tasks/data/model/task_model.dart';
 import 'package:http/http.dart' as http;
 
-abstract class DisplayTaskRemoteDataSource {
-  Future<List<TaskModel>> getAllTasks();
-  Future<List<TaskModel>> getAllPinnedTasks();
-  Future<List<TaskModel>> getAllTasksByStatus(TaskStatus status);
-  Future<List<SubtaskModel>> getAllSubtasksByTaskId(String taskId);
+abstract class FetchTaskRemoteDataSource {
+  Future<List<TaskModel>> getAllTasks(String username);
+  Future<List<TaskModel>> getAllPinnedTasks(String username);
+  Future<List<TaskModel>> getAllTasksByStatus(
+    String username,
+    TaskStatus status,
+  );
+  Future<List<SubtaskModel>> getAllSubtasksByTaskId(
+    String username,
+    String taskId,
+  );
 }
 
-class DisplayTaskRemoteDataSourceImpl implements DisplayTaskRemoteDataSource {
+class FetchTaskRemoteDataSourceImpl implements FetchTaskRemoteDataSource {
   final http.Client client;
 
-  DisplayTaskRemoteDataSourceImpl({required this.client});
+  FetchTaskRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<List<TaskModel>> getAllTasks() {
+  Future<List<TaskModel>> getAllTasks(String username) {
     try {
       final jsonResponse = [
         {
@@ -51,7 +57,7 @@ class DisplayTaskRemoteDataSourceImpl implements DisplayTaskRemoteDataSource {
   }
 
   @override
-  Future<List<TaskModel>> getAllPinnedTasks() {
+  Future<List<TaskModel>> getAllPinnedTasks(String username) {
     try {
       final jsonResponse = [
         {
@@ -83,7 +89,10 @@ class DisplayTaskRemoteDataSourceImpl implements DisplayTaskRemoteDataSource {
   }
 
   @override
-  Future<List<TaskModel>> getAllTasksByStatus(TaskStatus status) {
+  Future<List<TaskModel>> getAllTasksByStatus(
+    String username,
+    TaskStatus status,
+  ) {
     try {
       final jsonResponse = [
         {
@@ -106,7 +115,10 @@ class DisplayTaskRemoteDataSourceImpl implements DisplayTaskRemoteDataSource {
   }
 
   @override
-  Future<List<SubtaskModel>> getAllSubtasksByTaskId(String taskId) {
+  Future<List<SubtaskModel>> getAllSubtasksByTaskId(
+    String username,
+    String taskId,
+  ) {
     try {
       final jsonResponse = [
         {
@@ -118,7 +130,7 @@ class DisplayTaskRemoteDataSourceImpl implements DisplayTaskRemoteDataSource {
           'subtaskId': taskId,
           'subtaskTitle': 'Subtask 2',
           'subtaskStatus': TaskStatus.completed.name,
-        }
+        },
       ];
       return Future.value(
         jsonResponse.map((json) => SubtaskModel.fromJson(json)).toList(),
