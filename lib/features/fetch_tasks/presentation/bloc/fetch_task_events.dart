@@ -6,41 +6,41 @@ abstract class FetchTaskEvents extends Equatable {
   List<Object> get props => [];
 }
 
-class PinnedFetchTaskEventsImpl extends FetchTaskEvents {
+class FetchPinnedTaskEventsImpl extends FetchTaskEvents {
   final String username;
 
-  PinnedFetchTaskEventsImpl({required this.username});
+  FetchPinnedTaskEventsImpl({required this.username});
 
   @override
   List<Object> get props => [username];
 }
 
-class AllFetchTaskEventsImpl extends FetchTaskEvents {
+class FetchAllTaskEventsImpl extends FetchTaskEvents {
   final String username;
 
-  AllFetchTaskEventsImpl({required this.username});
+  FetchAllTaskEventsImpl({required this.username});
 
   @override
   List<Object> get props => [username];
 }
 
-class StatusFetchTaskEventsImpl extends FetchTaskEvents {
+class FetchStatusTaskEventsImpl extends FetchTaskEvents {
   final String username;
   final TaskStatus taskStatus;
 
-  StatusFetchTaskEventsImpl({
+  FetchStatusTaskEventsImpl({
     required this.taskStatus,
     required this.username,
   });
 
   @override
-  List<Object> get props => [username];
+  List<Object> get props => [username, taskStatus];
 }
 
-class SubFetchTaskEventsImpl extends FetchTaskEvents {
+class FetchSubTaskEventsImpl extends FetchTaskEvents {
   final String username;
 
-  SubFetchTaskEventsImpl({required this.username});
+  FetchSubTaskEventsImpl({required this.username});
 
   @override
   List<Object> get props => [username];
